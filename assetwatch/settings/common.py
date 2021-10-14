@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'dj_rest_auth.registration',
     'django_rest_passwordreset',
+    'drf_yasg',
 
 
 ]
@@ -159,7 +160,7 @@ AUTHENTICATION_BACKENDS = [
 REST_FRAMEWORK = {
 
     'DEFAULT_PERMISSION_CLASSES':[
-        'rest_framework.permissions.IsAuthenticated',
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
     ],
     'DEFAULT_AUTHENTICATION_CLASSES':[
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',

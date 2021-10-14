@@ -12,6 +12,7 @@ dj-rest-auth = {extras = ["with_social"], version = "*"}
 djangorestframework-simplejwt = "*"
 django-allauth = "*"
 django-rest-passwordreset = "*"
+drf-yasg = "*"
 
 [dev-packages]
 
