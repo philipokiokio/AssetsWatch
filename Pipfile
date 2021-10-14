@@ -7,6 +7,11 @@ name = "pypi"
 django = "*"
 psycopg2 = "*"
 djangorestframework = "*"
+pyjwt = "*"
+dj-rest-auth = {extras = ["with_social"], version = "*"}
+djangorestframework-simplejwt = "*"
+django-allauth = "*"
+django-rest-passwordreset = "*"
 
 [dev-packages]
 

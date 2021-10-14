@@ -3,24 +3,30 @@ from django.contrib.auth.base_user import BaseUserManager
 class UserManager(BaseUserManager):
     use_in_migrations = True
 
-    def _create_user(self, email,username, password, **extra_fields):
+
+
+    def create_user(self,email,username,password=None):
         if not email:
             raise ValueError('The given email must be set')
         email = self.normalize_email(email)
-        user = self.model(email=email,username=username, **extra_fields)
+        user = self.model(email=email,username=username)
         user.set_password(password)
-        user.save(using= self.db)
+        user.is_superuser=False
+        user.save()
         return user
 
-    def create_user(self,email,username,password=None,**extra_fields):
-        extra_fields.setdefault('is_superuser',False)
-        return self._create_user(email,username,password, **extra_fields)
-
+    
     def create_superuser(self,email,username,password, **extra_fields):
-        extra_fields.setdefault('is_superuser',True)
-        extra_fields.setdefault('is_staff',True)
+        if not email:
+            raise ValueError('The given email must be set')
+        email = self.normalize_email(email)
+        user = self.model(email=email,username=username)
+        user.set_password(password)      
+        
+        user.is_superuser=True
+        user.is_staff=True
 
-        if extra_fields.get('is_superuser') is not True:
+        if user.is_superuser is not True:
             raise ValueError('Superuser must have is_superuser=True')
         
-        return self._create_user(email,username,password, **extra_fields)
+        return user

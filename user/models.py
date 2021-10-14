@@ -6,7 +6,11 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.mail import send_mail
 from .managers import UserManager
 from django.utils.text import slugify
-from uuid import uuid4
+import uuid
+import jwt
+from datetime import datetime, timedelta
+from django.conf import settings
+
 
 
 # Create your models here.
@@ -24,19 +28,20 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     objects = UserManager()
     
-    USERNAME_FIELD = 'email'
-    REQUIRED_FIELDS = []
+    USERNAME_FIELD = 'username'
+    REQUIRED_FIELDS = ['email']
     
     
     def __str__(self):
         return self.email
 
-    def save(self):
+    def save(self,*args,**kwargs):
         user_name = self.username
-        user_id = uuid4()
-        sluger = user_name + user_id[:5]
+        user_id = str(uuid.uuid4())
+    
+        sluger = f'{user_name}-{user_id[:5]}'
         self.slug = slugify(sluger)
-        super(User,self).save()
+        super(User,self).save(*args,**kwargs)
         
 
         
@@ -52,6 +57,6 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 
-    
-    def email_user(self, subject, message, from_email=None, **kwargs):
-        send_mail(subject,message,from_email,[self.email], **kwargs)
+
+
+  

@@ -15,7 +15,7 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+print(BASE_DIR)
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
@@ -23,7 +23,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+
 
 ALLOWED_HOSTS = []
 
@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
 
     # localapps
@@ -46,9 +47,18 @@ INSTALLED_APPS = [
 
     # 3rd party
     
-    'rest_framework'
+    'rest_framework',
+    'dj_rest_auth',
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
+    'dj_rest_auth.registration',
+    'django_rest_passwordreset',
+
 
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -65,10 +75,17 @@ MIDDLEWARE = [
 AUTH_USER_MODEL = 'user.User'
 ROOT_URLCONF = 'assetwatch.urls'
 
+
+
+TEMPLATE_BASE_DIR = Path(__file__).resolve().parent.parent.parent
+
+
+
+
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [TEMPLATE_BASE_DIR/'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -132,3 +149,64 @@ STATIC_URL = '/static/'
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTHENTICATION_BACKENDS = [
+
+    'django.contrib.auth.backends.ModelBackend',
+    'allauth.account.auth_backends.AuthenticationBackend'
+]
+
+REST_FRAMEWORK = {
+
+    'DEFAULT_PERMISSION_CLASSES':[
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES':[
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
+
+    ]
+}
+
+
+REST_USE_JWT = True
+
+JWT_AUTH_COOKIE = 'asset-auth'
+JWT_AUTH_REFRESH_COOKIE ='asset-refresh-token'
+
+
+
+# mailer
+DEFAULT_FROM_EMAIL = 'philip@assetwatch.io'
+# url_frontend point
+
+
+URL_FRONT = 'https://assetwatch.io/'
+# all auth adapter
+ACCOUNT_ADAPTER = 'user.adapter.CustomAdapter'
+
+# Allauth
+ACCOUNT_AUTHENTICATION_METHOD ='username_email'
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_EMAIL_VERIFICATION='mandatory'
+ACCOUNT_EMAIL_SUBJECT_PREFIX = ''
+ACCOUNT_SIGNUP_PASSWORD_ENTER_TWICE = False
+
+
+# dj_rest_auth
+
+REST_AUTH_REGISTER_SERIALIZERS ={
+    'REGISTER_SERIALIZER': 'user.serializers.CustomRegisterSerializer'
+}
+
+
+# Django_rest_PasswordRest
+
+DJANGO_REST_PASSWORDRESET_TOKEN_CONFIG ={
+    'CLASS':'django_rest_passwordreset.tokens.RandomStringTokenGenerator',
+    'OPTIONS':{
+        'min_length':6,
+        'max_length':6,
+        'min_number':0000,
+        'max_number':9999,
+    }
+}
